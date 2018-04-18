@@ -77,6 +77,7 @@
 
 ;________________________________________________________________________________________________
 
+
 (def facts1
   '((on street1 junction1)
      (on street2 junction1)
@@ -123,31 +124,30 @@
 ;__________________________________________________
 
 (def rules1
-  '((rule 0 (on john ?y) => (on ?x ?z)
-          (rule 1 (on john ?z) => (on ?x ?y))
-           )))
+  '((rule 0 (on ?x ?y)(on ?y ?z)) => (on ?x ?z)
+     ))
 
 ;__________________________________________________
 
-(defn apply-all [rules facts]
-  (reduce concat
-          (map #(apply-rule % facts) rules)
-     ))
-__________________________________________________
 ;(defn apply-all [rules facts]
-;  (set (reduce concat
-;               (map #(apply-rule % facts) rules)
-;               )))
-;
-;(fwd-chain rules1 (set facts3))
+;  (reduce concat
+;          (map #(apply-rule % facts) rules)
+;     ))
+;__________________________________________________
+(defn apply-all [rules facts]
+  (set (reduce concat
+               (map #(apply-rule % facts) rules)
+               )))
+
+(fwd-chain rules1 (set facts3))
 ;__________________________________________________
 
 (defn fwd-chain [rules facts]
   (let [new-facts (apply-all rules facts)]
     (if (clojure.set/subset? new-facts facts)
-          facts
-          (recur rules (clojure.set/union facts new-facts))
-          )))
+      facts
+      (recur rules (clojure.set/union facts new-facts))
+      )))
 
 ;__________________________________________________
 
